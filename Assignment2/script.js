@@ -12,6 +12,8 @@ $(document).ready(() => {
     $("#add-car").click(() => {
         
         $("#add-edit-form-heading").text("Please fill the form to add new car");
+        $("#delete-car-data").addClass("hidden");
+        $("#add-edit-car-data").removeClass("hidden");
 
         $("#cID").val("");
         $("#cName").val("");
@@ -44,6 +46,7 @@ $(document).ready(() => {
         console.log("clicked " + carid);
 
         $("#add-edit-car-data").removeClass("hidden");
+        $("#delete-car-data").addClass("hidden");
         $("#add-edit-form-heading").text("Please fill the form to edit car id " + carid);
 
         $("#cID").val(carid);
@@ -54,6 +57,22 @@ $(document).ready(() => {
         $("#cFuel").val($("#cfuel-"+carid).text());
         $("#cDrive").val($("#cdrive-"+carid).text());
         $("#cQuantity").val($("#cquantity-"+carid).text());
+    });
+
+    $(".delete-car").click((evt) => {
+        carid = $(evt.currentTarget).attr('id').split("-")[2];
+        console.log("clicked " + carid);
+
+        $("#delete-car-data").removeClass("hidden");
+        $("#add-edit-car-data").addClass("hidden");
+
+        $("#delete_cid").val(carid);
+        $("#delete-car-id-span").text(carid);
+    });
+
+    $("#cancel-delete").click((evt) => {
+        $("#delete-car-data").addClass("hidden");
+        $("#add-edit-car-data").removeClass("hidden");
     });
 
 });

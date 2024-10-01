@@ -181,6 +181,19 @@
 
         }
 
+        if (!empty($_GET['delete_cid'])) {
+            $car_to_delete = $_GET['delete_cid'];
+            $query = "delete from carsdata where `carID` = $car_to_delete";
+
+            $result = mysqli_query($dbc, $query);
+            if ($result) {
+                header('Location: index.php');
+            } else {
+                echo "Something went wrong. Unable to delete from carsdata.";
+            }
+
+        }
+
         // Use the session data to prefill the form
         $form_data = $_SESSION['form_data'] ?? [];
         $errors = $_SESSION['errors'] ?? [];
@@ -229,7 +242,8 @@
                             $str_to_print .= "<td>
                                                 <a href=\"#add-edit-car-data\"><button id=\"edit-car-{$row['carID']}\" class=\"edit-car\"><i class=\"fa-regular fa-pen-to-square\"></i></button></a> 
                                                     |
-                                                     <button id=\"delete-car-{$row['carID']}\" class=\"delete-car\"><i class=\"fa-solid fa-trash-arrow-up\"></i></button></td>";
+                                                <a href=\"#delete-car-data\"><button id=\"delete-car-{$row['carID']}\" class=\"delete-car\"><i class=\"fa-solid fa-trash-arrow-up\"></i></button></a>     
+                                              </td>";
                             $str_to_print .= "</tr>";
                             // $str_to_print .= "<td> <a href='edit_user.php?user_id={$row['user_id']}'>Edit</a> | <a href='delete_user.php?user_id={$row['user_id']}'>Delete</a> </td> </tr>";
 
@@ -339,8 +353,24 @@
             </form>
         </div>
 
-        <div>
+        <div id="delete-car-data" class="hidden">
+            <form name="delete_car" class="needs-validation"
+                action="index.php" novalidate>
+                <h1 class="text-center" id="delete-form-heading">
+                    Are you sure you want to delete car id <span id="delete-car-id-span"></span>
+                </h1>
+                
+                <p class="hidden">
+                    <label for="delete_cid">Car ID:  </label>
+                    <input type="text" name="delete_cid" id="delete_cid" class="form-control" value="">
+                </p>
 
+                <p class="btn-row">
+                    <input type="submit" id="submit-delete" value="Submit" class="btn btn-primary submitbtn"/>
+                    <input type="reset" id="cancel-delete" value="Cancel" class="btn btn-danger submitbtn"/>
+                </p>
+
+            </form>
         </div>
     </div>
 
