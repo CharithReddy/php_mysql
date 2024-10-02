@@ -81,7 +81,7 @@
                 $errors['car_name'] = "Car Name must contain only letters.";
             }
 
-            // Validate if car name is empty or if it has alphabets only
+            // Validate if car description is empty or if it has alphabets only
             if (empty($car_desc)) {
                 $errors['car_desc'] = "Car Description cannot be empty";
             }
@@ -101,10 +101,12 @@
                 $errors['car_price'] = "Car Price must be between 100 and 999,999.99.";
             }
 
+            // fuel type must be selected
             if (empty($car_fuel)) {
                 $errors['car_fuel'] = 'Please select a fuel.';
             }
 
+            // drive type must be selected
             if (empty($car_drive)) {
                 $errors['car_drive'] = 'Please select a drive type.';
             }
@@ -113,12 +115,10 @@
                 // If there are errors save it session
                 $_SESSION['errors'] = $errors;
                 $_SESSION['form_data'] = $_POST;
-                // header('Location: index.php#add-edit-car-data');
             } else {
                 // If there are no errors then unset the session
                 unset($_SESSION['errors']);
                 unset($_SESSION['form_data']);
-                // header("Location: success.php");
 
                 $car_id = prepare_string($dbc, $car_id);
                 $car_name = prepare_string($dbc, $car_name);
@@ -131,24 +131,56 @@
 
                 $result = null;
 
+                // If car_id is empty it means that we are inserting into the table
                 if (empty($car_id)) {
+                    // $query = "INSERT INTO `carsdata`(`carName`, `carDescription`, `quantityAvailable`, `price`, `fuelType`, `driveType`, `addedBy`) 
+                    //             VALUES ('$car_name', '$car_desc', '$car_quantity', '$car_price', '$car_fuel', '$car_drive', '$car_added')";
+
                     $query = "INSERT INTO `carsdata`(`carName`, `carDescription`, `quantityAvailable`, `price`, `fuelType`, `driveType`, `addedBy`) 
-                                VALUES ('$car_name', '$car_desc', '$car_quantity', '$car_price', '$car_fuel', '$car_drive', '$car_added')";
+                                 VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+                    $stmt = mysqli_prepare($dbc, $query);
+
+                    mysqli_stmt_bind_param(
+                        $stmt,
+                        'ssidsss',
+                        $car_name,
+                        $car_desc,
+                        $car_quantity,
+                        $car_price,
+                        $car_fuel,
+                        $car_drive,
+                        $car_added
+                    );
 
                     // insert in database 
-                    $result = mysqli_query($dbc, $query);
+                    $result = mysqli_stmt_execute($stmt);
                 } else {
-                    $query = "UPDATE `carsdata`
-                              SET `carName` = \"$car_name\", `carDescription` = \"$car_desc\", 
-                                  `quantityAvailable` = $car_quantity, `price` = $car_price, 
-                                  `fuelType` = \"$car_fuel\", `driveType` = \"$car_drive\"
-                              WHERE `carID` = $car_id";
 
-                    $result = mysqli_query($dbc, $query);
+                    $query = "UPDATE `carsdata`
+                                SET `carName` = ?, `carDescription` = ?, 
+                                    `quantityAvailable` = ?, `price` = ?, 
+                                    `fuelType` = ?, `driveType` = ?
+                                WHERE `carID` = ?";
+                    
+                    $stmt = mysqli_prepare($dbc, $query);
+
+                    mysqli_stmt_bind_param(
+                        $stmt,
+                        'ssidssi',
+                        $car_name,
+                        $car_desc,
+                        $car_quantity,
+                        $car_price,
+                        $car_fuel,
+                        $car_drive,
+                        $car_id
+                    );
+
+                    $result = mysqli_stmt_execute($stmt);
                 }
 
-                
-
+                // If successfull then refresh the page to show new data.
                 if ($result) {
                     header('Location: index.php');
                 } else {
@@ -159,11 +191,14 @@
 
         }
 
+        // This block will be run to delete data from the table
         if (!empty($_GET['delete_cid'])) {
             $car_to_delete = $_GET['delete_cid'];
             $query = "delete from carsdata where `carID` = $car_to_delete";
 
             $result = mysqli_query($dbc, $query);
+
+            // Refresh the page if successfull.
             if ($result) {
                 header('Location: index.php');
             } else {
@@ -186,6 +221,7 @@
                     <button id="add-car" class="btn btn-primary">+1 Add New Car</button></a>
             </div>
 
+            <!-- Table to display each row in the carsdata table -->
             <table class="table table-striped table-bordered">
                 <thead class="table-dark">
                     <tr>
@@ -230,6 +266,7 @@
             </table>
         </div>
 
+        <!-- The heading in this div depends on the operation -->
         <div id="add-edit-car-data">
             <form name="add_edit_car" class="needs-validation"
                 method="post" action="index.php" novalidate>
@@ -238,11 +275,12 @@
                     Please fill the form to add new car
                 </h1>
 
+                <!-- This field is hidden. It is used to determine to add or update the data in table -->
                 <p class="hidden">
                     <label for="cID">Car ID:  </label>
                     <input type="text" name="cID" id="cID" 
                         class="form-control"
-                        value="<?= isset($form_data['cID']) ? $form_data['cID'] : "" ?>">
+                        value="<?= isset($form_data['cID']) ? $form_data['cID'] : "" ?>" readonly>
                 </p>
 
                 <p> 
@@ -329,6 +367,7 @@
             </form>
         </div>
 
+        <!-- This div is show if delete button is clicked otherwise it is hidden -->
         <div id="delete-car-data" class="hidden">
             <form name="delete_car" class="needs-validation"
                 action="index.php" novalidate>
