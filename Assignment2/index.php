@@ -11,19 +11,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cars List</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" 
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" 
+        rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" 
         crossorigin="anonymous">
     <link rel="stylesheet" 
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
     <link rel="stylesheet" href="style.css">
 
-    <!-- <style>
-        .dont {
-            display : none;
-        }
-    </style> -->
 
 </head>
 <body>
@@ -34,7 +29,7 @@
         function validate_car($value) {
             $value = trim($value);
 
-            if (preg_match('/^[a-zA-Z]+( [A-Za-z\d]+)?$/', $value)) {
+            if (preg_match('/[a-zA-Z]+( [A-Za-z\d]+)?/', $value)) {
                 return true;
             } else {
                 return false;
@@ -51,20 +46,11 @@
             }
         }
 
+        // validate price is between 100 and 999999.99
         function validate_price($value) {
             $value = trim($value);
 
-            if (preg_match('/^[\d]{3, 6}(\.[\d]{1,2})?$/', $value)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        function validate_name($value) {
-            $value = trim($value);
-
-            if (preg_match('/^[a-zA-Z]+$/', $value)) {
+            if (preg_match('/^([1-9][\d]{2}|[\d]{4,6})(\.[\d]{1,2})?$/', $value)) {
                 return true;
             } else {
                 return false;
@@ -107,19 +93,12 @@
                 $errors['car_quantity'] = "Car Name must contain only digits.";
             }
 
-            // Validate if car name is empty or if it has alphabets only
+            // Validate if car price is empty or if it has alphabets only
             if (empty($car_price)) {
                 $errors['car_price'] = "Car Price cannot be empty";
             } 
-            // else if (!validate_price($car_price)){
-            //     $errors['car_price'] = "Car Price must be between 100 and 999,999.99.";
-            // }
-
-            // Validate if car name is empty or if it has alphabets only
-            if (empty($car_added)) {
-                $errors['car_added'] = "Car Name cannot be empty";
-            } else if (!validate_name($car_added)){
-                $errors['car_added'] = "Car Name must contain only letters.";
+            else if (!validate_price($car_price)){
+                $errors['car_price'] = "Car Price must be between 100 and 999,999.99.";
             }
 
             if (empty($car_fuel)) {
@@ -171,10 +150,9 @@
                 
 
                 if ($result) {
-                    echo "Part added successfully.";
                     header('Location: index.php');
                 } else {
-                    echo "Something went wrong. Part not added.";
+                    echo "Something went wrong. Inserting or Updateing cardata failed.";
                 }
 
             }
@@ -202,15 +180,14 @@
     <div class="table-container">
 
         <div id="show-car-data">
-            <div>
+            <div class="flexrow">
                 <h1>Please see the list of all cars.</h1>
-                <span id="operation"></span>
-                <a href="#add-edit-car-data"><button id="add-car">Add new car</button></a>
-                
+                <a href="#add-edit-car-data">
+                    <button id="add-car" class="btn btn-primary">+1 Add New Car</button></a>
             </div>
 
             <table class="table table-striped table-bordered">
-                <thead class="thead-dark">
+                <thead class="table-dark">
                     <tr>
                         <th scope="col">Car ID</th>
                         <th scope="col">Name</th>
@@ -240,12 +217,11 @@
                             $str_to_print .= "<td id=\"cquantity-{$row['carID']}\">{$row['quantityAvailable']}</td>";
                             $str_to_print .= "<td>{$row['addedBy']}</td>";
                             $str_to_print .= "<td>
-                                                <a href=\"#add-edit-car-data\"><button id=\"edit-car-{$row['carID']}\" class=\"edit-car\"><i class=\"fa-regular fa-pen-to-square\"></i></button></a> 
+                                                <a href=\"#add-edit-car-data\"><button id=\"edit-car-{$row['carID']}\" class=\"edit-car\"><i class=\"fa-regular fa-pen-to-square fa-2x\"></i></button></a> 
                                                     |
-                                                <a href=\"#delete-car-data\"><button id=\"delete-car-{$row['carID']}\" class=\"delete-car\"><i class=\"fa-solid fa-trash-arrow-up\"></i></button></a>     
+                                                <a href=\"#delete-car-data\"><button id=\"delete-car-{$row['carID']}\" class=\"delete-car\"><i class=\"fa-solid fa-trash-arrow-up fa-2x\"></i></button></a>     
                                               </td>";
                             $str_to_print .= "</tr>";
-                            // $str_to_print .= "<td> <a href='edit_user.php?user_id={$row['user_id']}'>Edit</a> | <a href='delete_user.php?user_id={$row['user_id']}'>Delete</a> </td> </tr>";
 
                             echo $str_to_print;
                         }
@@ -262,7 +238,7 @@
                     Please fill the form to add new car
                 </h1>
 
-                <p>
+                <p class="hidden">
                     <label for="cID">Car ID:  </label>
                     <input type="text" name="cID" id="cID" 
                         class="form-control"

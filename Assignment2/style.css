@@ -14,17 +14,17 @@
     text-indent : 50px;
 }
 
+.table tr td:nth-of-type(2) {
+    width: 30%;
+}
+
+.table tr td:last-of-type {
+    width: 10%;
+}
+
 .table-container {
-    width: 80%;
+    width: 90%;
     margin : auto;
-}
-
-.invalidval {
-    border : 1px solid red;
-}
-
-.errortext {
-    color : red;
 }
 
 .invalidval {
@@ -37,6 +37,12 @@
 
 .success-page {
     background-color: antiquewhite;
+}
+
+.flexrow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .flexcol {
@@ -56,10 +62,13 @@
 
 .btn-row {
     text-align: center;
+    display: flex;
+    padding: 25px ;
+    justify-content: space-evenly;
 }
 
 .submitbtn {
-    width: 30%;
+    width: 25%;
 }
 
 .hidden {
@@ -69,5 +78,14 @@
 .dont {
     /* display: none; */
     color: blue;
+}
+
+#show-car-data,
+#add-edit-car-data,
+#delete-car-data {
+    border: 1px solid black;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 10px auto;
 }
 
