@@ -1,7 +1,7 @@
 <?php
     require('dbinit.php');
 
-    $query = 'SELECT * FROM carsdata;'; 
+    $query = 'SELECT * FROM cars;'; 
     $results = @mysqli_query($dbc,$query);
 ?>
 
@@ -18,7 +18,6 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
     <link rel="stylesheet" href="style.css">
-
 
 </head>
 <body>
@@ -133,10 +132,10 @@
 
                 // If car_id is empty it means that we are inserting into the table
                 if (empty($car_id)) {
-                    // $query = "INSERT INTO `carsdata`(`carName`, `carDescription`, `quantityAvailable`, `price`, `fuelType`, `driveType`, `addedBy`) 
+                    // $query = "INSERT INTO `cars`(`carName`, `carDescription`, `quantityAvailable`, `price`, `fuelType`, `driveType`, `addedBy`) 
                     //             VALUES ('$car_name', '$car_desc', '$car_quantity', '$car_price', '$car_fuel', '$car_drive', '$car_added')";
 
-                    $query = "INSERT INTO `carsdata`(`carName`, `carDescription`, `quantityAvailable`, `price`, `fuelType`, `driveType`, `addedBy`) 
+                    $query = "INSERT INTO `cars`(`carName`, `carDescription`, `quantityAvailable`, `price`, `fuelType`, `driveType`, `addedBy`) 
                                  VALUES (?, ?, ?, ?, ?, ?, ?)";
 
                     $stmt = mysqli_prepare($dbc, $query);
@@ -157,7 +156,7 @@
                     $result = mysqli_stmt_execute($stmt);
                 } else {
 
-                    $query = "UPDATE `carsdata`
+                    $query = "UPDATE `cars`
                                 SET `carName` = ?, `carDescription` = ?, 
                                     `quantityAvailable` = ?, `price` = ?, 
                                     `fuelType` = ?, `driveType` = ?
@@ -194,7 +193,7 @@
         // This block will be run to delete data from the table
         if (!empty($_GET['delete_cid'])) {
             $car_to_delete = $_GET['delete_cid'];
-            $query = "delete from carsdata where `carID` = $car_to_delete";
+            $query = "delete from cars where `carID` = $car_to_delete";
 
             $result = mysqli_query($dbc, $query);
 
@@ -202,7 +201,7 @@
             if ($result) {
                 header('Location: index.php');
             } else {
-                echo "Something went wrong. Unable to delete from carsdata.";
+                echo "Something went wrong. Unable to delete from cars.";
             }
 
         }
@@ -221,7 +220,7 @@
                     <button id="add-car" class="btn btn-primary">+1 Add New Car</button></a>
             </div>
 
-            <!-- Table to display each row in the carsdata table -->
+            <!-- Table to display each row in the cars table -->
             <table class="table table-striped table-bordered">
                 <thead class="table-dark">
                     <tr>
